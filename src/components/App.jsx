@@ -1,43 +1,69 @@
-// src/components/App.js
-import React, { useState } from 'react';
+// src/components/App.jsx
+import React, { Component } from 'react';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
+import styles from './App.module.css';
 
-const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
-
-  const addContact = (name, number) => {
-    const contact = {
-      id: `id-${Date.now()}`,
-      name,
-      number,
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      contacts: [],
+      filter: '',
     };
-    setContacts([...contacts, contact]);
+  }
+
+  handleAddContact = (name, number) => {
+    const { contacts } = this.state;
+    const isDuplicate = contacts.some((contact) => contact.name === name);
+
+    if (isDuplicate) {
+      alert('Contact with the same name already exists!');
+    } else {
+      const newContact = {
+        id: `id-${Date.now()}`,
+        name,
+        number,
+      };
+      this.setState((prevState) => ({
+        contacts: [...prevState.contacts, newContact],
+      }));
+    }
   };
 
-  const removeContact = (id) => {
-    setContacts(contacts.filter((contact) => contact.id !== id));
+  handleRemoveContact = (contactId) => {
+    this.setState((prevState) => ({
+      contacts: prevState.contacts.filter((contact) => contact.id !== contactId),
+    }));
   };
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
+  handleFilterChange = (e) => {
+    this.setState({ filter: e.target.value });
   };
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  render() {
+    const { contacts, filter } = this.state;
+    const filteredContacts = contacts.filter((contact) =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
 
-  return (
-    <div>
-      <h1>Phonebook</h1>
-      <ContactForm addContact={addContact} />
-      <h2>Contacts</h2>
-      <Filter filter={filter} onFilterChange={handleFilterChange} />
-      <ContactList contacts={filteredContacts} onRemoveContact={removeContact} />
-    </div>
-  );
-};
+    return (
+      <div className={styles.app}>
+        <h1 className={styles.title}>Phonebook</h1>
+        <ContactForm
+          contacts={contacts}
+          addContact={this.handleAddContact}
+        />
+        <h2 className={styles.subtitle}>Contacts</h2>
+        <Filter filter={filter} onFilterChange={this.handleFilterChange} />
+        <ContactList
+          contacts={filteredContacts}
+          onRemoveContact={this.handleRemoveContact}
+        />
+      </div>
+    );
+  }
+}
 
 export default App;

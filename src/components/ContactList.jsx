@@ -1,22 +1,26 @@
 // src/components/ContactList.js
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ContactItem from './ContactItem';
 import styles from './ContactList.module.css';
 
-const ContactList = ({ contacts, onRemoveContact }) => {
-  return (
-    <ul className={styles.list}>
-      {contacts.map((contact) => (
-        <ContactItem
-          key={contact.id}
-          contact={contact}
-          onRemoveContact={onRemoveContact}
-        />
-      ))}
-    </ul>
-  );
-};
+class ContactList extends Component {
+  render() {
+    const { contacts, onRemoveContact } = this.props;
+
+    return (
+      <ul className={styles.list}>
+        {contacts.map((contact) => (
+          <ContactItem
+            key={contact.id}
+            contact={contact}
+            onRemoveContact={onRemoveContact}
+          />
+        ))}
+      </ul>
+    );
+  }
+}
 
 ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
